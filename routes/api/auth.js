@@ -4,10 +4,12 @@ const auth = require('../../middleware/auth');
 const User = require('../../models/User')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 router.get('/', auth, async (req, res) => {
     try {
+        // -password will leave off the password
         const user = await User.findById(req.user.id).select("-password");
         res.json(user);
     } catch (err) {
@@ -19,14 +21,14 @@ router.get('/', auth, async (req, res) => {
 router.post('/',
     [
         check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Password is required').isLength({ min: 6 })
+        check('password', 'Password is required').exists()
     ]
     , async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { name, email, password } = req.body;
+        const { email, password } = req.body;
 
         try {
             let user = await User.findOne({ email });
