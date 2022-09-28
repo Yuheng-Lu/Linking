@@ -1,4 +1,4 @@
-# Linking 🔗
+# Linking 🔗
 
 *This project is still under construction*
 
